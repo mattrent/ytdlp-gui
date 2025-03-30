@@ -1,0 +1,60 @@
+body {
+    overflow: hidden;
+}
+
+.container {
+    padding: 1rem;
+}
+
+#url_form {
+    display: flex;
+    justify-content: space-between;
+}
+
+#url_form #url_input {
+    flex-grow: 0.8;
+}
+
+#url_form #url_input.error {
+    border-color: red;
+    color: red;
+}
+
+#url_form #download_button {
+    flex-grow: 0;
+}
+
+#settings_form {
+    display: flex;
+    justify-content: space-around;
+}
+
+#settings_form #location_button {
+    flex-grow: 0.4;
+}
+
+#settings_form #format_select {
+    flex-grow: 0;
+}
+
+#status_container_inner {
+    display: flex;
+    justify-content: space-around;
+}
+
+#progress_bar {
+    background-color: rgb(192, 192, 192);
+    width: 80%;
+    border-radius: 15px;
+    margin: auto;
+    margin-top: 2em;
+}
+
+#progress_bar_inner {
+    background-color: #0078e7;
+    color: white;
+    text-align: right;
+    font-size: 16px;
+    border-radius: 15px;
+    width: 0%;
+}

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>yt-dlp GUI</title>
+    <link rel="stylesheet" href="pure.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="/eel.js"></script>
+    <script type="text/javascript">
+        function download_video() {
+            let url = document.getElementById("url_input").value
+            let format = document.getElementById("format_select").value
+            let location = document.getElementById("location_button").innerText
+            eel.download_video(url, format, location)()
+        }
+
+        function pick_download_folder() {
+            eel.pick_download_folder()()
+        }
+
+        function set_url_input(text) {
+            document.getElementById("url_input").value = text;
+        }
+
+        function set_format(value) {
+            document.getElementById("format_select").value = value;
+        }
+
+        function update_url() {
+            new_url = document.getElementById("url_input").value
+            eel.update_url(new_url)
+        }
+        function update_format() {
+            new_format = document.getElementById("format_select").value
+            eel.update_format(new_format)
+        }
+    </script>
+    <script type="text/javascript">
+        eel.expose(set_controls_enabled)
+        eel.expose(set_url_input_error)
+        eel.expose(update_status)
+        eel.expose(update_download_path)
+        eel.expose(update_video_label)
+
+        function set_controls_enabled(flag) {
+            let url = document.getElementById("url_input")
+            let format = document.getElementById("format_select")
+            let location = document.getElementById("location_button")
+            let download_button = document.getElementById("download_button")
+
+            url.disabled = !flag
+            format.disabled = !flag
+            location.disabled = !flag
+            download_button.disabled = !flag
+        }
+
+        function set_url_input_error(flag) {
+            let url_input = document.getElementById("url_input")
+            if (flag) {
+                if (!url_input.classList.contains("error")) {
+                    url_input.classList.add("error")
+                }
+            } else {
+                if (url_input.classList.contains("error")) {
+                    url_input.classList.remove("error")
+                }
+            }
+        }
+
+        function update_status(status, speed, percent) {
+            document.getElementById("status_label").innerText = status;
+            let speed_mb = speed / (1024 * 1024);
+            document.getElementById("speed_label").innerText = `${speed_mb.toFixed(1)} MiB/s`;
+            document.getElementById("progress_bar_inner").innerText = `${percent.toFixed(1)}%`;
+            document.getElementById("progress_bar_inner").style.width = `${percent}%`;
+
+        }
+
+        function update_download_path(path) {
+            document.getElementById("location_button").innerText = path;
+        }
+
+        function update_video_label(text) {
+            document.getElementById("video_label").innerText = text;
+        }
+    </script>
+</head>
+
+<body>
+    <div id="main_container" class="container">
+        <div id="url_container" class="container">
+            <form id="url_form" class="pure-form">
+                <input id="url_input" class="input" placeholder="Enter valid URL" onchange="update_url()">
+                <button id="download_button" onclick="download_video()" class="pure-button" type="button">
+                    <img src="download.svg">
+                </button>
+            </form>
+        </div>
+
+        <div id="video_label_container" class="container">
+            <span id="video_label"></span>
+        </div>
+
+        <div id="settings_container" class="container">
+            <form id="settings_form" class="pure-form">
+                <button id="location_button" onclick="pick_download_folder()" class="pure-button"></button>
+                <select id="format_select" onchange="update_format()">
+                    <option value="mp3">mp3</option>
+                    <option value="mp4">mp4</option>
+                </select>
+            </form>
+        </div>
+
+        <div id="status_container" class="container">
+
+            <div id="status_container_inner">
+                <span id="status_label"></span>
+                <span id="speed_label"></span>
+            </div>
+
+            <div id="progress_bar">
+                <div id="progress_bar_inner">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function sync_state() {
+            state = await eel.get_state()()
+            update_download_path(state["location"])
+            update_video_label(state["video_label"])
+            set_url_input(state["url"])
+            set_format(state["format"])
+        }
+        sync_state()
+    </script>
+</body>
+
+</html>
