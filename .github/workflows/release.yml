@@ -50,7 +50,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: release/**/*.tar.gz
+          files: release/**/*.exe
           token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: false
           draft: false
