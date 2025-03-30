@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: "windows-latest"
+    runs-on: "ubuntu-latest"
     steps:
       - uses: actions/checkout@v3
       - name: Setup Python
@@ -13,22 +13,22 @@ jobs:
         with:
           python-version: 3.12
 
-      - name: Install ANGLE
-        run: |
-          curl https://github.com/mmozeiko/build-angle/releases/download/2025-03-30/angle-x64-2025-03-30.zip
-          unzip angle-x64-2025-03-30.zip
-          ./build.cmd
+      # - name: Install deps
+      #   run: pip install -r requirements.txt pyinstaller
 
-      - name: Install deps
-        run: pip install -r requirements.txt pyinstaller
+      # - name: Bundle application
+      #   run: pyinstaller main.spec
+      #   #  --noconfirm --onedir --windowed --add-data "C:\Users\name\AppData\Local\Programs\Python\Python311\Lib\site-packages\customtkinter;customtkinter/" --add-data --hidden-import plyer.platforms.win.filechooser --hidden-import plyer.platforms.linux.filechooser
 
-      - name: Bundle application
-        run: pyinstaller main.py --onefile --hidden-import plyer.platforms.win.filechooser --hidden-import plyer.platforms.linux.filechooser
+      - name: PyInstaller Windows
+        uses: JackMcKew/pyinstaller-action-windows@main
+        with:
+          path: src
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          path: dist/main.exe
+          path: src/dist/windows/main.exe
 
   github-release:
     if: startswith(github.ref, 'refs/tags/') # Only run on tag push
