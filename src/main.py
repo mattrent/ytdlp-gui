@@ -128,7 +128,4 @@ if __name__ == "__main__":
     global location
     location = get_default_download_path()
     eel.init("web")
-    eel.start("main.html", size=(540, 360), block=False, close_callback=close)
-    while True:
-        print("thread")
-        eel.sleep(1)
+    eel.start("main.html", size=(540, 360), block=True, close_callback=close)
