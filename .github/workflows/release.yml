@@ -33,7 +33,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          path: src/dist
+          path: src/dist/ytdlp-gui.exe
 
   github-release:
     if: startswith(github.ref, 'refs/tags/') # Only run on tag push
