@@ -4,6 +4,9 @@
 # TODO: setup dependabot to auto-update and auto-release when a new version of yt_dlp comes out
 # TODO: auto-upload .exe release
 # TODO: download new version when opening app
+# TODO: migrate to customtkinter
+# https://github.com/TomSchimansky/CustomTkinter/discussions/423#discussioncomment-3549223
+# https://github.com/TomSchimansky/CustomTkinter/issues/631
 
 import os
 from threading import Thread
@@ -24,6 +27,7 @@ from kivymd.uix.button import MDIconButton
 from kivymd.uix.label import MDLabel
 from kivymd.uix.textfield import MDTextField
 from kivymd.uix.progressbar import MDProgressBar
+from kivymd.icon_definitions import md_icons
 
 from plyer import filechooser
 
@@ -68,8 +72,9 @@ class App(MDApp):
             return os.path.join(os.path.expanduser("~"), "Downloads")
 
     def pick_download_folder(self, _btn):
-        path = filechooser.choose_dir()
-        self.location = path
+        path = filechooser.choose_dir(multiple=False)
+        self.location = path[0]
+        self.location_button.text = path[0]
 
     def download_video(self, url):
         if validators.url(url):
