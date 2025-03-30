@@ -17,7 +17,7 @@ jobs:
         with:
           python-version: 3.12
 
-      - if: matrix.platforms.os == 'ubuntu-latest'
+      - if: matrix.os == 'ubuntu-latest'
         name: Install mtdev
         run: sudo apt install libmtdev-dev
 
@@ -27,13 +27,13 @@ jobs:
       - name: Bundle application
         run: pyinstaller main.py --hidden-import plyer.platforms.win.filechooser --hidden-import plyer.platforms.linux.filechooser
 
-      - if: matrix.platforms.os == 'windows-latest'
+      - if: matrix.os == 'windows-latest'
         name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           path: dist/main.exe
 
-      - if: matrix.platforms.os == 'ubuntu-latest'
+      - if: matrix.os == 'ubuntu-latest'
         name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
