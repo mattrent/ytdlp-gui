@@ -5,11 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: ["windows-latest", "ubuntu-latest"]
+    runs-on: "windows-latest"
     steps:
       - uses: actions/checkout@v3
       - name: Setup Python
@@ -17,24 +13,19 @@ jobs:
         with:
           python-version: 3.12
 
-      - if: matrix.os == 'ubuntu-latest'
-        name: Install mtdev
-        run: sudo apt install libmtdev-dev
+      - name: Install ANGLE
+        run: |
+          curl https://github.com/mmozeiko/build-angle/releases/download/2025-03-30/angle-x64-2025-03-30.zip
+          unzip angle-x64-2025-03-30.zip
+          ./build.cmd
 
       - name: Install deps
         run: pip install -r requirements.txt pyinstaller
 
       - name: Bundle application
-        run: pyinstaller main.py --hidden-import plyer.platforms.win.filechooser --hidden-import plyer.platforms.linux.filechooser
+        run: pyinstaller main.py --onefile --hidden-import plyer.platforms.win.filechooser --hidden-import plyer.platforms.linux.filechooser
 
-      - if: matrix.os == 'windows-latest'
-        name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          path: dist/main.exe
-
-      - if: matrix.os == 'ubuntu-latest'
-        name: Upload artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           path: dist/main.exe
@@ -45,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: release
 
