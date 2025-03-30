@@ -1,0 +1,47 @@
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["windows-latest", "ubuntu-latest", "macos-latest"]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.12
+
+      - name: Install deps
+        run: pip install -r requirements.txt pyinstaller
+
+      - name: Bundle application
+        run: pyinstaller main.py --hidden-import plyer.platforms.win.filechooser --hidden-import plyer.platforms.linux.filechooser
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: dist/*
+
+  github-release:
+    if: startswith(github.ref, 'refs/tags/') # Only run on tag push
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: release
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release/**/*.tar.gz
+          token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: false
+          draft: false
