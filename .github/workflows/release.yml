@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["windows-latest", "ubuntu-latest", "macos-latest"]
+        os: ["windows-latest", "ubuntu-latest"]
     steps:
       - uses: actions/checkout@v3
       - name: Setup Python
@@ -17,16 +17,27 @@ jobs:
         with:
           python-version: 3.12
 
+      - if: matrix.platforms.os == "ubuntu-latest"
+        name: Install mtdev
+        run: sudo apt install libmtdev-dev
+
       - name: Install deps
         run: pip install -r requirements.txt pyinstaller
 
       - name: Bundle application
         run: pyinstaller main.py --hidden-import plyer.platforms.win.filechooser --hidden-import plyer.platforms.linux.filechooser
 
-      - name: Upload artifact
+      - if: matrix.platforms.os == "windows-latest"
+        name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          path: dist/*
+          path: dist/main.exe
+
+      - if: matrix.platforms.os == "ubuntu-latest"
+        name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: dist/main.exe
 
   github-release:
     if: startswith(github.ref, 'refs/tags/') # Only run on tag push
