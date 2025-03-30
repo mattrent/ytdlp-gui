@@ -24,7 +24,7 @@ jobs:
         run: pyinstaller main.py --hidden-import plyer.platforms.win.filechooser --hidden-import plyer.platforms.linux.filechooser
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           path: dist/*
 
