@@ -28,7 +28,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          path: src/dist/windows/main.exe
+          path: src/dist/windows
 
   github-release:
     if: startswith(github.ref, 'refs/tags/') # Only run on tag push
