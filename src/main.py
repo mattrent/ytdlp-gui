@@ -8,6 +8,7 @@
 import os
 from shutil import which
 from threading import Thread
+import sys
 import validators
 
 import eel
@@ -19,6 +20,7 @@ from yt_dlp import YoutubeDL
 video_label = ""
 video_format = "mp3"
 url = ""
+dialog_closed = False
 
 formats = {
     "mp3": {
@@ -34,6 +36,16 @@ formats = {
         "quiet": True,
     },
 }
+
+
+def resource_path(relative_path):
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 
 @eel.expose
@@ -52,12 +64,19 @@ def get_default_download_path():
 
 @eel.expose
 def pick_download_folder():
-    global location
 
-    path = filechooser.choose_dir(multiple=False)
-    if path:
-        location = path
-        eel.update_download_path(path[0])()
+    def inner():
+        global location
+        global dialog_closed
+        path = filechooser.choose_dir(multiple=False)
+        if path:
+            location = path
+            eel.update_download_path(path[0])()
+        eel.set_controls_enabled(True)
+        dialog_closed = True
+
+    eel.set_controls_enabled(False)
+    eel.spawn(inner)
 
 
 @eel.expose
@@ -78,7 +97,9 @@ def download_video_thread(url, format, location):
         ytdl_opts["paths"] = {"home": location}
         ytdl_opts["progress_hooks"] = [progress_hook]
         if not which("ffmpeg") and os.name == "nt":
-            ytdl_opts["ffmpeg_location"] = os.path.join(".", "ffmpeg", "ffmpeg.exe")
+            ytdl_opts["ffmpeg_location"] = resource_path(
+                os.path.join(".", "ffmpeg", "ffmpeg.exe")
+            )
         with YoutubeDL(ytdl_opts) as ytdl:
             video_label = "Fetching..."
             eel.update_video_label("Fetching...")
@@ -124,7 +145,13 @@ def update_format(new_format):
 
 
 def close(page, sockets_still_open):
-    os._exit(0)
+    global dialog_closed
+
+    # only exit if main window was closed, not file picker
+    if dialog_closed:
+        dialog_closed = False
+    else:
+        os._exit(0)
 
 
 if __name__ == "__main__":
@@ -132,15 +159,22 @@ if __name__ == "__main__":
     location = get_default_download_path()
     eel.init("web")
     try:
-        eel.start("main.html", size=(540, 360), block=True, close_callback=close)
+        eel.start(
+            "main.html", port=0, size=(540, 360), block=False, close_callback=close
+        )
+        while True:
+            eel.sleep(1.0)
     except OSError as e:
         if os.name == "nt":
             eel.start(
                 "main.html",
+                port=0,
                 size=(540, 360),
-                block=True,
+                block=False,
                 close_callback=close,
                 mode="edge",
             )
+            while True:
+                eel.sleep(1.0)
         else:
             raise e
