@@ -36,7 +36,7 @@ jobs:
           cd ffmpeg
           unzip ffmpeg.zip
           mv ffmpeg-master-latest-win64-gpl/bin/ffmpeg.exe ..
-          rm ffmpeg-master-latest-win64-gpl
+          rmdir ffmpeg-master-latest-win64-gpl/
           rm ffmpeg.zip
 
       - name: Bundle application
