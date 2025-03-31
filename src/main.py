@@ -6,6 +6,7 @@
 # TODO: download new version when opening app
 
 import os
+from shutil import which
 from threading import Thread
 import validators
 
@@ -76,6 +77,8 @@ def download_video_thread(url, format, location):
         ytdl_opts = formats[format]
         ytdl_opts["paths"] = {"home": location}
         ytdl_opts["progress_hooks"] = [progress_hook]
+        if not which("ffmpeg") and os.name == "nt":
+            ytdl_opts["ffmpeg_location"] = os.path.join(".", "ffmpeg", "ffmpeg.exe")
         with YoutubeDL(ytdl_opts) as ytdl:
             video_label = "Fetching..."
             eel.update_video_label("Fetching...")
@@ -128,4 +131,16 @@ if __name__ == "__main__":
     global location
     location = get_default_download_path()
     eel.init("web")
-    eel.start("main.html", size=(540, 360), block=True, close_callback=close)
+    try:
+        eel.start("main.html", size=(540, 360), block=True, close_callback=close)
+    except OSError as e:
+        if os.name == "nt":
+            eel.start(
+                "main.html",
+                size=(540, 360),
+                block=True,
+                close_callback=close,
+                mode="edge",
+            )
+        else:
+            raise e
