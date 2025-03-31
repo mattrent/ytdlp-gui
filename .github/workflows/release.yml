@@ -33,9 +33,8 @@ jobs:
         run: |
           mkdir ffmpeg
           wget https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip -O ./ffmpeg/ffmpeg.zip
-          cd ffmpeg
           unzip ffmpeg.zip
-          mv ffmpeg-master-latest-win64-gpl/bin/ffmpeg.exe ..
+          mv ffmpeg-master-latest-win64-gpl/bin/ffmpeg.exe ffmpeg/
           rmdir ffmpeg-master-latest-win64-gpl/
           rm ffmpeg.zip
 
