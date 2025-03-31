@@ -29,12 +29,11 @@ jobs:
       #   with:
       #     path: src
       - name: Download ffmpeg binary
-        working-directory: ./src
         run: |
-          mkdir ffmpeg
+          mkdir src/ffmpeg
           wget https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip -O ffmpeg.zip
           unzip ffmpeg.zip
-          mv ffmpeg-master-latest-win64-gpl/bin/ffmpeg.exe ffmpeg/
+          mv ffmpeg-master-latest-win64-gpl/bin/ffmpeg.exe src/ffmpeg/
 
       - name: Bundle application
         working-directory: ./src
