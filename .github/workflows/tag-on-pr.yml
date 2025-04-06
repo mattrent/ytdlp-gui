@@ -1,9 +1,11 @@
+name: Generate tag on PR
 on:
   pull_request:
     types:
       - closed
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   tag-on-pr:
@@ -24,3 +26,4 @@ jobs:
               ref: 'refs/tags/${{ steps.date.outputs.tag_name }}',
               sha: context.sha
             })
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
