@@ -1,6 +1,6 @@
 on:
   push:
-    tags: ["v*"]
+    tags: ["*"]
   workflow_dispatch:
 
 jobs:
@@ -37,9 +37,13 @@ jobs:
           unzip ffmpeg.zip
           mv ffmpeg-master-latest-win64-gpl/bin/ffmpeg.exe src/ffmpeg/
 
+      - name: Create version file
+        run: |
+          echo ${{ github.ref_name }} > src/version
+
       - name: Bundle application
         working-directory: ./src
-        run: python -m eel main.py web -n ytdlp-gui --onefile --noconsole --hidden-import plyer.platforms.win.filechooser --hidden-import plyer.platforms.linux.filechooser --add-data ./ffmpeg:ffmpeg
+        run: python -m eel main.py web -n ytdlp-gui --onefile --noconsole --hidden-import plyer.platforms.win.filechooser --hidden-import plyer.platforms.linux.filechooser --add-data ./ffmpeg:ffmpeg --add-data version
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
