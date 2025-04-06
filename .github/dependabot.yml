@@ -5,7 +5,34 @@ updates:
     schedule:
       interval: daily
       time: "12:00"
-    groups:
-      python-packages:
-        patterns:
-          - "yt-dlp"
+    ignore:
+      - dependency-name: "altgraph"
+      - dependency-name: "bottle"
+      - dependency-name: "bottle-websocket"
+      - dependency-name: "certifi"
+      - dependency-name: "charset-normalizer"
+      - dependency-name: "darkdetect"
+      - dependency-name: "docutils"
+      - dependency-name: "Eel"
+      - dependency-name: "filetype"
+      - dependency-name: "future"
+      - dependency-name: "gevent"
+      - dependency-name: "gevent-websocket"
+      - dependency-name: "greenlet"
+      - dependency-name: "idna"
+      - dependency-name: "packaging"
+      - dependency-name: "pillow"
+      - dependency-name: "plyer"
+      - dependency-name: "Pygments"
+      - dependency-name: "pyinstaller"
+      - dependency-name: "pyinstaller-hooks-contrib"
+      - dependency-name: "pyparsing"
+      - dependency-name: "requests"
+      - dependency-name: "setuptools"
+      - dependency-name: "typing_extensions"
+      - dependency-name: "urllib3"
+      - dependency-name: "validators"
+      - dependency-name: "zope.event"
+      - dependency-name: "zope.interface"
+    allow:
+      - dependency-name: "yt-dlp"
