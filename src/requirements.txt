@@ -13,7 +13,7 @@ gevent-websocket==0.10.1
 greenlet==3.1.1
 idna==3.10
 packaging==24.2
-pillow==10.4.0
+pillow==11.1.0
 plyer==2.1.0
 Pygments==2.19.1
 pyinstaller==6.12.0
